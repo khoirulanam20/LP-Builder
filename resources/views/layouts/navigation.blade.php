@@ -4,16 +4,22 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                <div class="shrink-0 flex items-center gap-3">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
+                        <x-application-logo class="block h-9 w-auto" />
+                        <span class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition tracking-tight">
+                            {{ \App\Models\SystemSetting::where('key', 'site_name')->value('value') ?? config('app.name') }}
+                        </span>
                     </a>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     @if(Auth::user()->role === 'superadmin')
                         <x-nav-link :href="route('superadmin.dashboard')" :active="request()->routeIs('superadmin.dashboard')">
-                            {{ __('Superadmin Dashboard') }}
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('superadmin.users.index')" :active="request()->routeIs('superadmin.users.*')">
+                            {{ __('Users') }}
                         </x-nav-link>
                     @else
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -92,7 +98,10 @@
         <div class="pt-2 pb-3 space-y-1">
             @if(Auth::user()->role === 'superadmin')
                 <x-responsive-nav-link :href="route('superadmin.dashboard')" :active="request()->routeIs('superadmin.dashboard')">
-                    {{ __('Superadmin Dashboard') }}
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('superadmin.users.index')" :active="request()->routeIs('superadmin.users.*')">
+                    {{ __('Users') }}
                 </x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">

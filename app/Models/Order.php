@@ -8,6 +8,10 @@ class Order extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'midtrans_response' => 'array',
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }

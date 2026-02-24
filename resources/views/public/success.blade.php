@@ -40,7 +40,7 @@
                     <i class="fas fa-check text-4xl text-green-500"></i>
                 </div>
                 <h1 class="text-3xl font-black tracking-tight mb-2">Terima Kasih!</h1>
-                <p class="text-sm text-green-100 font-medium">Pesanan Anda telah kami terima dan sedang diproses.</p>
+                <p class="text-sm text-green-100 font-medium">Pembayaran Anda telah berhasil diverifikasi.</p>
             </div>
 
             <div class="p-8">
@@ -50,8 +50,8 @@
                         <span class="font-bold">{{ session('review_success') }}</span>
                     </div>
                 @else
-                    <div class="glass-card rounded-3xl p-6 mb-8 text-center text-sm text-slate-600 leading-relaxed shadow-sm">
-                        Proses verifikasi manual membutuhkan waktu <strong>1-2 jam kerja</strong>. Pastikan Anda memeriksa kotak masuk atau folder spam email yang Anda daftarkan untuk menerima pesanan Anda.
+                    <div class="glass-card rounded-3xl p-6 mb-8 text-center text-sm text-slate-600 leading-relaxed shadow-sm uppercase font-bold tracking-tight">
+                        Halo! Jangan lupa cek emailnya ya. Kalau belum muncul di inbox, coba intip folder Spam sebentar.
                     </div>
 
                     <div class="bg-accent border border-secondary p-6 rounded-3xl mb-8 shadow-sm relative overflow-hidden">

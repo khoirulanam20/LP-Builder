@@ -91,19 +91,30 @@
                         </h3>
                         <p class="text-sm text-gray-600 mb-6">Atur pesan custom yang akan dikirimkan ke email pembeli setelah pembayaran pesanan dikonfirmasi (Status: Berhasil).</p>
                         
-                        <div class="bg-pink-50/50 border border-pink-100 rounded-2xl p-5 mb-6 shadow-sm">
-                            <h4 class="text-xs font-bold text-pink-800 mb-2 uppercase tracking-wide">Email Preview</h4>
-                            <div class="text-sm text-gray-700 space-y-2 font-mono bg-white/80 p-4 rounded-xl border border-pink-100/50">
-                                <p>Halo <strong>[Nama Pembeli]</strong>,</p>
-                                <p>Terima kasih atas pesanan Anda untuk produk <strong>[Nama Produk]</strong>.</p>
+                        <div class="bg-gray-100/50 border border-gray-200 rounded-2xl p-5 mb-6 shadow-sm">
+                            <h4 class="text-[10px] font-black text-gray-400 mb-3 uppercase tracking-widest">EMAIL PREVIEW</h4>
+                            <div class="text-xs text-gray-700 space-y-3 bg-white p-6 rounded-2xl shadow-inner border border-gray-100">
+                                <p class="font-bold text-sm text-gray-900 overflow-hidden"># Halo [Nama Pembeli],</p>
+                                <p>Terima kasih telah melakukan pembelian produk <strong>[Nama Produk]</strong>.</p>
+                                
                                 <template x-if="customMsg && customMsg.trim() !== ''">
-                                    <div class="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-2 rounded text-yellow-800 italic text-xs whitespace-pre-wrap" x-text="customMsg"></div>
+                                    <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl text-gray-700 italic text-[11px] whitespace-pre-wrap shadow-sm" x-text="customMsg"></div>
                                 </template>
                                 <template x-if="!customMsg || customMsg.trim() === ''">
-                                    <p class="text-pink-600 bg-pink-50 inline-block px-2 py-1 rounded italic">{Pesan Custom Anda akan tampil di sini}</p>
+                                    <div class="bg-pink-50 border border-pink-100 p-4 rounded-xl text-pink-500 italic text-[11px] font-semibold flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        Pesan Custom Anda akan tampil di sini
+                                    </div>
                                 </template>
-                                <p>Berikut adalah akses produk Anda:<br>
-                                <a href="#" class="text-blue-600 underline">Link / Download File</a></p>
+                                
+                                <p class="pt-2 text-gray-600">Berikut adalah akses ke produk Anda:</p>
+                                <div class="bg-indigo-600 text-white text-center py-2.5 rounded-lg font-bold text-[11px] shadow-sm">
+                                    Akses / Download Produk
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-4 border-t border-gray-50 pt-3">
+                                    Terima kasih,<br>
+                                    <strong>{{ config('app.name') }}</strong>
+                                </p>
                             </div>
                         </div>
 

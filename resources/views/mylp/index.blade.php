@@ -80,115 +80,113 @@
                                 @foreach($products as $prod)
                                     <div class="relative mb-4">
                                         <div class="bg-white/80 rounded-2xl p-5 border border-purple-100 shadow-sm flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-                                        <div class="flex items-center gap-4">
-                                            @if($prod->image_path)
-                                                <img src="{{ asset('storage/'.$prod->image_path) }}" class="w-16 h-16 rounded-xl object-cover shadow">
-                                            @else
-                                                <div class="w-16 h-16 rounded-xl bg-purple-100 flex items-center justify-center text-purple-400">
-                                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                                </div>
-                                            @endif
-                                            <div>
-                                                <h4 class="font-bold text-gray-800 text-lg">{{ $prod->name }}</h4>
-                                                <div class="text-sm text-gray-500">
-                                                    Rp {{ number_format($prod->sale_price ?: $prod->price, 0, ',', '.') }}
-                                                    @if($prod->sale_price) <span class="line-through text-xs ml-1">Rp {{ number_format($prod->price, 0, ',', '.') }}</span> @endif
-                                                </div>
-                                                <div class="text-xs text-purple-600 mt-1 font-semibold">{{ $prod->addOns->count() }} Add-ons</div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-2">
-                                            <button @click="editProduct({{ $prod->id }})" class="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
-                                                Edit
-                                            </button>
-                                            <form method="POST" action="{{ route('my-lp.product.destroy', $prod->id) }}" onsubmit="return confirm('Delete this product?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-
-                                    <!-- Nested Add-ons for this product -->
-                                    <div class="ml-10 mt-3 space-y-3 border-l-2 border-pink-200 pl-4">
-                                        @foreach($prod->addOns as $addon)
-                                            <div class="bg-white/60 backdrop-blur-md rounded-xl p-3 border border-pink-100 flex items-center justify-between">
-                                                <div class="flex items-center gap-3">
-                                                    @if($addon->image_path)
-                                                        <img src="{{ asset('storage/'.$addon->image_path) }}" class="w-8 h-8 rounded shadow object-cover">
-                                                    @endif
-                                                    <div>
-                                                        <div class="font-bold text-gray-800 text-sm">{{ $addon->name }}</div>
-                                                        <div class="text-xs text-gray-500">+Rp {{ number_format($addon->price, 0, ',', '.') }}</div>
+                                            <div class="flex items-center gap-4">
+                                                @if($prod->image_path)
+                                                    <img src="{{ asset('storage/'.$prod->image_path) }}" class="w-16 h-16 rounded-xl object-cover shadow">
+                                                @else
+                                                    <div class="w-16 h-16 rounded-xl bg-purple-100 flex items-center justify-center text-purple-400">
+                                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                                     </div>
+                                                @endif
+                                                <div>
+                                                    <h4 class="font-bold text-gray-800 text-lg">{{ $prod->name }}</h4>
+                                                    <div class="text-sm text-gray-500">
+                                                        Rp {{ number_format($prod->sale_price ?: $prod->price, 0, ',', '.') }}
+                                                        @if($prod->sale_price) <span class="line-through text-xs ml-1">Rp {{ number_format($prod->price, 0, ',', '.') }}</span> @endif
+                                                    </div>
+                                                    <div class="text-xs text-purple-600 mt-1 font-semibold">{{ $prod->addOns->count() }} Add-ons</div>
                                                 </div>
-                                                <form method="POST" action="{{ route('my-lp.addon.destroy', $addon->id) }}" onsubmit="return confirm('Delete this add-on?')">
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <button @click="editProduct({{ $prod->id }})" class="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition">
+                                                    Edit
+                                                </button>
+                                                <form method="POST" action="{{ route('my-lp.product.destroy', $prod->id) }}" onsubmit="return confirm('Delete this product?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg transition">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                    <button type="submit" class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition">
+                                                        Delete
                                                     </button>
                                                 </form>
                                             </div>
-                                        @endforeach
-                                        
-                                        <!-- Add Add-on Button -->
-                                        <button x-show="!showAddonForm || targetProductId != {{ $prod->id }}" @click="openAddonForm({{ $prod->id }})" class="text-sm py-2 px-4 border border-dashed border-pink-300 bg-pink-50/50 hover:bg-pink-100 text-pink-600 font-bold rounded-lg transition flex items-center gap-2">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                            Add new add-on
-                                        </button>
-
-                                        <!-- Add Add-on Form -->
-                                        <div class="bg-white rounded-2xl p-5 border border-pink-200 shadow-sm mt-2" x-show="showAddonForm && targetProductId == {{ $prod->id }}" style="display: none;">
-                                            <form method="POST" action="{{ route('my-lp.addon.store') }}" enctype="multipart/form-data">
-                                                @csrf
-                                                <input type="hidden" name="product_id" value="{{ $prod->id }}">
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                                                    <div>
-                                                        <label class="block text-xs font-semibold text-gray-700 mb-1">Add-on Name</label>
-                                                        <input type="text" name="name" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" required>
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-xs font-semibold text-gray-700 mb-1">Price</label>
-                                                        <input type="number" name="price" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" required>
-                                                    </div>
-                                                </div>
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-                                                    <div>
-                                                        <label class="block text-xs font-semibold text-gray-700 mb-1">Delivery Type</label>
-                                                        <select name="type" x-model="addonType" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
-                                                            <option value="file">File Upload</option>
-                                                            <option value="url">External URL</option>
-                                                        </select>
-                                                    </div>
-                                                    <div x-show="addonType == 'url'">
-                                                        <label class="block text-xs font-semibold text-gray-700 mb-1">URL Link</label>
-                                                        <input type="url" name="download_url" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" placeholder="https://...">
-                                                    </div>
-                                                    <div x-show="addonType == 'file'">
-                                                        <label class="block text-xs font-semibold text-gray-700 mb-1">File Upload (Optional)</label>
-                                                        <input type="file" name="file_upload" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-pink-100 file:text-pink-700">
-                                                    </div>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <label class="block text-xs font-semibold text-gray-700 mb-1">Image (Optional)</label>
-                                                    <input type="file" name="image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-pink-100 file:text-pink-700">
-                                                </div>
-                                                <div class="flex items-center gap-2">
-                                                    <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold py-1.5 px-4 rounded-lg shadow-sm transition">Save</button>
-                                                    <button type="button" @click="showAddonForm = false" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold py-1.5 px-4 rounded-lg transition">Cancel</button>
-                                                </div>
-                                            </form>
                                         </div>
 
+                                        <!-- Nested Add-ons for this product -->
+                                        <div class="ml-10 mt-3 space-y-3 border-l-2 border-pink-200 pl-4">
+                                            @foreach($prod->addOns as $addon)
+                                                <div class="bg-white/60 backdrop-blur-md rounded-xl p-3 border border-pink-100 flex items-center justify-between">
+                                                    <div class="flex items-center gap-3">
+                                                        @if($addon->image_path)
+                                                            <img src="{{ asset('storage/'.$addon->image_path) }}" class="w-8 h-8 rounded shadow object-cover">
+                                                        @endif
+                                                        <div>
+                                                            <div class="font-bold text-gray-800 text-sm">{{ $addon->name }}</div>
+                                                            <div class="text-xs text-gray-500">+Rp {{ number_format($addon->price, 0, ',', '.') }}</div>
+                                                        </div>
+                                                    </div>
+                                                    <form method="POST" action="{{ route('my-lp.addon.destroy', $addon->id) }}" onsubmit="return confirm('Delete this add-on?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg transition">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endforeach
+                                            
+                                            <!-- Add Add-on Button -->
+                                            <button x-show="!showAddonForm || targetProductId != {{ $prod->id }}" @click="openAddonForm({{ $prod->id }})" class="text-sm py-2 px-4 border border-dashed border-pink-300 bg-pink-50/50 hover:bg-pink-100 text-pink-600 font-bold rounded-lg transition flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                                Add new add-on
+                                            </button>
+
+                                            <!-- Add Add-on Form -->
+                                            <div class="bg-white rounded-2xl p-5 border border-pink-200 shadow-sm mt-2" x-show="showAddonForm && targetProductId == {{ $prod->id }}" style="display: none;">
+                                                <form method="POST" action="{{ route('my-lp.addon.store') }}" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="product_id" value="{{ $prod->id }}">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                                                        <div>
+                                                            <label class="block text-xs font-semibold text-gray-700 mb-1">Add-on Name</label>
+                                                            <input type="text" name="name" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" required>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-semibold text-gray-700 mb-1">Price</label>
+                                                            <input type="number" name="price" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                                                        <div>
+                                                            <label class="block text-xs font-semibold text-gray-700 mb-1">Delivery Type</label>
+                                                            <select name="type" x-model="addonType" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500">
+                                                                <option value="file">File Upload</option>
+                                                                <option value="url">External URL</option>
+                                                            </select>
+                                                        </div>
+                                                        <div x-show="addonType == 'url'">
+                                                            <label class="block text-xs font-semibold text-gray-700 mb-1">URL Link</label>
+                                                            <input type="url" name="download_url" class="w-full text-sm rounded-lg border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500" placeholder="https://...">
+                                                        </div>
+                                                        <div x-show="addonType == 'file'">
+                                                            <label class="block text-xs font-semibold text-gray-700 mb-1">File Upload (Optional)</label>
+                                                            <input type="file" name="file_upload" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-pink-100 file:text-pink-700">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-4">
+                                                        <label class="block text-xs font-semibold text-gray-700 mb-1">Image (Optional)</label>
+                                                        <input type="file" name="image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-md file:border-0 file:bg-pink-100 file:text-pink-700">
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-bold py-1.5 px-4 rounded-lg shadow-sm transition">Save</button>
+                                                        <button type="button" @click="showAddonForm = false" class="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold py-1.5 px-4 rounded-lg transition">Cancel</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
                             </div>
-
-
 
                             <button x-show="!showProductForm" @click="openNewProductForm()" class="w-full py-4 border-2 border-dashed border-purple-300 bg-purple-50/50 hover:bg-purple-50 text-purple-600 font-bold rounded-2xl transition flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -196,32 +194,29 @@
                             </button>
                         </div>
                     </div>
-
                 </div>
 
                 <!-- Right Pane: Mobile Preview (Sticky) -->
-                <div class="w-full lg:w-[50%] lg:max-w-[320px] flex-shrink-0 relative">
+                <div class="w-full lg:w-[42%] lg:max-w-[360px] flex-shrink-0 relative">
                     <div class="sticky top-24 pt-4 flex flex-col items-center w-full h-[calc(100vh-120px)]">
                         <div class="bg-black text-white text-xs font-mono mb-2 px-3 py-1 rounded-full opacity-60 flex-shrink-0">Live Preview</div>
                         
                         <!-- Device Frame -->
-                        <div class="w-[360px] max-w-full h-full bg-white border-[12px] border-gray-900 rounded-[2.5rem] overflow-hidden shadow-2xl relative flex flex-col flex-1">
+                        <div class="w-full h-full bg-white border-[12px] border-gray-900 rounded-[2.5rem] overflow-hidden shadow-2xl relative flex flex-col flex-1">
                             
                             <!-- Notch -->
                             <div class="absolute top-0 inset-x-0 h-6 bg-gray-900 rounded-b-2xl w-40 mx-auto z-20"></div>
 
-                            <!-- Mock Content inside device -- faithful preview of show.blade.php -->
+                            <!-- Mock Content inside device -->
                             <div class="flex-1 overflow-y-auto w-full relative pb-20" style="background-color:#FAF8F1;">
                                 
-                                <!-- Header (dark, like show.blade.php) -->
+                                <!-- Header -->
                                 <div class="relative rounded-b-[2rem] overflow-hidden shadow-md" style="background:#121212; padding: 2.5rem 1rem 1.5rem; text-align:center;">
-                                    <!-- Background image overlay -->
                                     <template x-if="imagePreview">
                                         <div class="absolute inset-0 opacity-20 bg-cover bg-center" :style="'background-image: url(' + imagePreview + ')'"></div>
                                     </template>
 
                                     <div class="relative z-10">
-                                        <!-- Logo avatar -->
                                         <div class="relative inline-block mb-3">
                                             <div class="w-16 h-16 rounded-full mx-auto border-4 flex items-center justify-center text-white text-2xl font-bold shadow-md" style="border-color:#FAEAB1;" :style="'background:' + themeColor">
                                                 <span x-text="title.charAt(0) || 'L'" style="display:block;"></span>
@@ -229,18 +224,8 @@
                                             <div class="absolute bottom-0 right-0 w-4 h-4 rounded-full border-2" style="background:#22c55e; border-color:#121212;"></div>
                                         </div>
 
-                                        <!-- Title -->
                                         <div class="font-bold text-white text-sm tracking-tight leading-tight" x-text="title || 'My Landing Page'"></div>
-                                        
-                                        <!-- Description -->
                                         <div class="text-xs mt-1 px-2 leading-relaxed" style="color:#FAEAB1;" x-text="description || 'Deskripsi halaman Anda...'"></div>
-
-                                        <!-- Social Links -->
-                                        <div class="flex justify-center flex-wrap gap-3 mt-3" x-show="Object.keys(socialLinks).length > 0">
-                                            <template x-for="[platform, url] in Object.entries(socialLinks)" :key="platform">
-                                                <span class="text-[14px]" style="color:#FAEAB1;" x-html="getSocialIcon(platform)"></span>
-                                            </template>
-                                        </div>
                                     </div>
                                 </div>
 
@@ -250,8 +235,6 @@
 
                                     <template x-for="prod in products" :key="prod.id">
                                         <div class="group relative bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex items-center p-2.5 cursor-pointer hover:border-primary" style="transition: all 0.2s;">
-                                            
-                                            <!-- Product Image -->
                                             <div class="w-14 h-14 rounded-lg flex-shrink-0 flex items-center justify-center overflow-hidden shadow-inner" style="background-color:#FAF8F1; color:#34656D;">
                                                 <template x-if="prod.image">
                                                     <img :src="prod.image" class="w-full h-full object-cover">
@@ -261,7 +244,6 @@
                                                 </template>
                                             </div>
 
-                                            <!-- Info -->
                                             <div class="ml-2.5 flex-grow">
                                                 <div class="font-bold text-[11px] leading-tight" style="color:#121212;" x-text="prod.name"></div>
                                                 <div class="flex items-center mt-1 gap-1">
@@ -277,7 +259,6 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Chevron -->
                                             <div class="ml-1 border border-slate-200 text-slate-400 p-2 rounded-full" style="font-size:10px;">
                                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                             </div>
@@ -285,7 +266,6 @@
                                     </template>
                                 </div>
 
-                                <!-- Footer CTA -->
                                 <div class="px-3 mt-6">
                                     <div class="font-black text-[11px] italic text-center" style="color:#121212;">Pesan Sekarang & Buktikan!</div>
                                     <div class="mt-3 text-white font-black text-center text-[10px] py-3 rounded-xl shadow-md" :style="'background:' + themeColor">
@@ -296,9 +276,6 @@
                         </div>
                     </div>
                 </div>
-
-            </div>
-        </div>
 
             </div>
         </div>
@@ -350,7 +327,7 @@
                         </div>
                         <div x-show="pType == 'url'">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">URL Link</label>
-                            <input type="url" name="download_url" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500" placeholder="https://...">
+                            <input type="url" name="download_url" x-model="pDownloadUrl" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500" placeholder="https://...">
                         </div>
                         <div x-show="pType == 'file'">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Upload Product File</label>
@@ -372,11 +349,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-show="!pUnlimited">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Stock Qty</label>
-                                <input type="number" name="qty" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                <input type="number" name="qty" x-model="pQty" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-1">Limit per checkout</label>
-                                <input type="number" name="limit_per_checkout" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
+                                <input type="number" name="limit_per_checkout" x-model="pLimit" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500">
                             </div>
                         </div>
                     </div>
@@ -389,18 +366,17 @@
             </div>
         </div>
     </div>
-    </div>
+</div>
 
     <script>
         function lpBuilder() {
             return {
-                title: '{{ addslashes($landingPage->title) }}',
-                description: '{{ addslashes($landingPage->description) }}',
-                imagePreview: '{{ $landingPage->image_path ? asset('storage/' . $landingPage->image_path) : '' }}',
-                themeColor: '{{ $landingPage->appearance->theme_color ?? '#34656D' }}',
-                socialLinks: {!! json_encode($landingPage->appearance->social_links ?? []) !!},
+                title: @json($landingPage->title),
+                description: @json($landingPage->description),
+                imagePreview: @json($landingPage->image_path ? asset('storage/' . $landingPage->image_path) : ''),
+                themeColor: @json($landingPage->appearance->theme_color ?? '#34656D'),
+                socialLinks: @json($landingPage->appearance->social_links ?? []),
                 
-                // Real DB Products array
                 products: {!! collect($products)->map(function($p) {
                     return [
                         'id' => $p->id,
@@ -408,6 +384,11 @@
                         'description' => $p->description,
                         'price' => $p->price,
                         'sale_price' => $p->sale_price,
+                        'type' => $p->type,
+                        'is_unlimited_qty' => $p->is_unlimited_qty,
+                        'qty' => $p->qty,
+                        'limit_per_checkout' => $p->limit_per_checkout,
+                        'download_url' => $p->download_url,
                         'image' => $p->image_path ? asset('storage/'.$p->image_path) : null,
                         'addons' => $p->addOns->map(function($a) { 
                             return ['name' => $a->name, 'price' => $a->price]; 
@@ -415,10 +396,10 @@
                     ];
                 })->toJson() !!},
 
-                // Form States
                 showProductForm: false,
                 editProductId: null,
                 pName: '', pPrice: '', pSalePrice: '', pType: 'file', pUnlimited: true, pDescription: '',
+                pDownloadUrl: '', pQty: '', pLimit: '',
                 quillEditor: null,
 
                 initEditor() {
@@ -453,28 +434,34 @@
                     this.editProductId = null;
                     this.pName = ''; this.pPrice = ''; this.pSalePrice = ''; this.pDescription = '';
                     this.pType = 'file'; this.pUnlimited = true;
+                    this.pDownloadUrl = ''; this.pQty = ''; this.pLimit = '';
                     this.showProductForm = true;
                     setTimeout(() => {
                         this.initEditor();
-                        this.quillEditor.root.innerHTML = '';
+                        if(this.quillEditor) this.quillEditor.root.innerHTML = '';
                     }, 100);
                 },
 
                 editProduct(id) {
-                    const originProducts = @json($products);
-                    const prod = originProducts.find(p => p.id === id);
+                    const prod = this.products.find(p => p.id === id);
                     if(prod) {
                         this.editProductId = prod.id;
                         this.pName = prod.name;
                         this.pPrice = prod.price;
                         this.pSalePrice = prod.sale_price;
-                        this.pType = prod.type;
+                        this.pType = prod.type || 'file';
                         this.pUnlimited = prod.is_unlimited_qty == 1;
+                        this.pDownloadUrl = prod.download_url || '';
+                        this.pQty = prod.qty || '';
+                        this.pLimit = prod.limit_per_checkout || '';
                         this.pDescription = prod.description || '';
+                        
+                        // Set standard fields in form if needed or just use models
                         this.showProductForm = true;
+                        
                         setTimeout(() => {
                             this.initEditor();
-                            this.quillEditor.root.innerHTML = this.pDescription;
+                            if(this.quillEditor) this.quillEditor.root.innerHTML = this.pDescription;
                         }, 100);
                     }
                 },

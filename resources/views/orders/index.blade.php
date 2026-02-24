@@ -5,126 +5,125 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
             @if(session('status'))
-                <div class="mb-4 font-medium text-sm text-green-800 bg-green-100/50 backdrop-blur border border-green-200 p-3 rounded-lg">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl shadow-sm">
                     {{ session('status') }}
                 </div>
             @endif
 
-            <div class="bg-white/60 backdrop-blur-xl shadow-xl rounded-3xl border border-white/50 overflow-hidden" x-data="{ showModal: false, imageUrl: '' }">
-                <div class="p-8 text-gray-900 border-b border-gray-200/50">
-                    <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
-                        Orders Management
-                    </h3>
-                    
-                    @if($orders->isEmpty())
-                        <p class="text-gray-500 text-sm">No orders found.</p>
-                    @else
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Proof</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($orders as $order)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $order->created_at->format('M d, Y H:i') }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <div>{{ $order->customer_name ?? 'N/A' }}</div>
-                                                <div class="text-xs text-gray-500">{{ $order->customer_email }}</div>
-                                            </td>
-                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ optional($order->product)->name ?? 'Unknown' }}
-                                                <span class="text-xs text-gray-400 block mt-0.5">Qty: {{ $order->quantity }}</span>
-                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                @if($order->status == 'pending')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                                                @elseif($order->status == 'verified')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Verified</span>
-                                                @elseif($order->status == 'completed')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
-                                                @elseif($order->status == 'rejected')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                @if($order->payment_proof_path)
-                                                    <button @click="imageUrl = '{{ asset('storage/' . $order->payment_proof_path) }}'; showModal = true" class="text-indigo-600 hover:text-indigo-900 flex items-center bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors font-medium">
-                                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                                        View Proof
-                                                    </button>
-                                                @else
-                                                    <span class="text-gray-400">Not uploaded</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                @if($order->status == 'pending')
-                                                    <form method="POST" action="{{ route('orders.verify', $order->id) }}" class="inline-block">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="verified">
-                                                        <button type="submit" class="text-blue-600 hover:text-blue-900 mr-3" onclick="return confirm('Mark this order as verified?')">Verify</button>
-                                                    </form>
-                                                    <form method="POST" action="{{ route('orders.verify', $order->id) }}" class="inline-block">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="rejected">
-                                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Reject this order?')">Reject</button>
-                                                    </form>
-                                                @elseif($order->status == 'verified')
-                                                    <form method="POST" action="{{ route('orders.verify', $order->id) }}" class="inline-block">
-                                                        @csrf
-                                                        <input type="hidden" name="status" value="completed">
-                                                        <button type="submit" class="text-green-600 hover:text-green-900" onclick="return confirm('Mark order as completed? This usually means the product has been delivered.')">Complete Order</button>
-                                                    </form>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div class="mt-4">
-                            {{ $orders->links() }}
-                        </div>
-                    @endif
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl shadow-sm">
+                    {{ session('error') }}
                 </div>
+            @endif
 
-                <!-- Image Modal (Alpine.js) -->
-                <div x-show="showModal" 
-                     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm" 
-                     style="display: none;"
-                     @keydown.escape.window="showModal = false">
-                    
-                    <!-- Modal Background Overlay -->
-                    <div class="absolute inset-0" @click="showModal = false"></div>
-                    
-                    <!-- Modal Content -->
-                    <div class="relative bg-white rounded-3xl shadow-2xl overflow-hidden max-w-3xl w-full border border-gray-100 flex flex-col max-h-[90vh]">
-                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                            <h3 class="font-bold text-gray-800">Payment Proof</h3>
-                            <button @click="showModal = false" class="text-gray-400 hover:text-gray-600 p-1 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                            </button>
-                        </div>
-                        <div class="p-6 overflow-y-auto flex items-center justify-center bg-gray-50 min-h-[300px]">
-                            <img :src="imageUrl" class="max-w-full max-h-[60vh] object-contain rounded-xl shadow-md border border-gray-200">
-                        </div>
+            <div class="bg-white/80 backdrop-blur-xl shadow-sm rounded-3xl border border-white p-6 overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                            Daftar Pesanan
+                        </h3>
+                        <p class="text-xs text-gray-500 mt-1">Pantau dan verifikasi pesanan masuk lewat Midtrans.</p>
                     </div>
                 </div>
+                
+                @if($orders->isEmpty())
+                    <div class="text-center py-12">
+                        <div class="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-3.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                        </div>
+                        <p class="text-gray-400 text-sm">Belum ada pesanan masuk.</p>
+                    </div>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-100">
+                            <thead>
+                                <tr class="text-left text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50/50">
+                                    <th class="px-6 py-4">Waktu & Ref</th>
+                                    <th class="px-6 py-4">Pembeli</th>
+                                    <th class="px-6 py-4">Produk</th>
+                                    <th class="px-6 py-4">Total</th>
+                                    <th class="px-6 py-4">Status Midtrans</th>
+                                    <th class="px-6 py-4 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50">
+                                @foreach($orders as $order)
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-xs font-semibold text-gray-900">{{ $order->created_at->format('d M Y') }}</div>
+                                            <div class="text-[10px] text-gray-400 font-mono mt-0.5">{{ $order->midtrans_order_id ?? 'N/A' }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-xs font-bold text-gray-900">{{ $order->customer_name ?? 'N/A' }}</div>
+                                            <div class="text-[10px] text-gray-500">{{ $order->customer_email }}</div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-xs text-gray-700 font-medium truncate max-w-[150px]">{{ optional($order->product)->name ?? 'Unknown' }}</div>
+                                            <div class="text-[10px] text-gray-400 mt-0.5">Qty: {{ $order->quantity }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-xs font-black text-indigo-600">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @php
+                                                $statusClasses = [
+                                                    'pending'   => 'bg-yellow-50 text-yellow-700 border-yellow-100',
+                                                    'verified'  => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                                    'completed' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                                    'failed'    => 'bg-red-50 text-red-700 border-red-100',
+                                                    'rejected'  => 'bg-gray-100 text-gray-600 border-gray-200',
+                                                ];
+                                                $cls = $statusClasses[$order->status] ?? 'bg-gray-50 text-gray-500 border-gray-100';
+                                            @endphp
+                                            <div class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold border {{ $cls }} uppercase tracking-wider shadow-sm">
+                                                {{ $order->status }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <!-- Sync Button -->
+                                                @if($order->midtrans_order_id && in_array($order->status, ['pending', 'failed']))
+                                                    <form method="POST" action="{{ route('orders.sync', $order->id) }}">
+                                                        @csrf
+                                                        <button type="submit" class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Sync Status Midtrans">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                                        </button>
+                                                    </form>
+                                                @endif
+
+                                                <!-- Action Buttons -->
+                                                @if($order->status == 'completed')
+                                                    <form method="POST" action="{{ route('orders.verify', $order->id) }}">
+                                                        @csrf
+                                                        <input type="hidden" name="status" value="verified">
+                                                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-md transition active:scale-95">
+                                                            VERIFIKASI
+                                                        </button>
+                                                    </form>
+                                                @elseif($order->status == 'verified')
+                                                    <div class="text-[10px] font-bold text-emerald-600 italic flex items-center justify-end gap-1">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                                        Terverifikasi
+                                                    </div>
+                                                @elseif($order->status == 'pending')
+                                                    <div class="text-[10px] font-bold text-yellow-600/50 italic">Menunggu Bayar</div>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6">
+                        {{ $orders->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_approved',
+        'custom_email_message',
     ];
 
     /**

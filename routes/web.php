@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified', 'is.approved'])->group(function () {
     Route::get('/statistic', [\App\Http\Controllers\StatisticController::class, 'index'])->name('statistic.index');
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
     Route::post('/orders/{id}/verify', [\App\Http\Controllers\OrderController::class, 'verify'])->name('orders.verify');
+    Route::post('/orders/{id}/sync', [\App\Http\Controllers\OrderController::class, 'syncStatus'])->name('orders.sync');
     Route::get('/setting', [\App\Http\Controllers\SettingController::class, 'index'])->name('setting.index');
     Route::post('/setting/payment', [\App\Http\Controllers\SettingController::class, 'storePayment'])->name('setting.payment.store');
     Route::delete('/setting/payment/{id}', [\App\Http\Controllers\SettingController::class, 'destroyPayment'])->name('setting.payment.destroy');
@@ -33,8 +34,11 @@ Route::middleware(['auth', 'verified', 'is.approved'])->group(function () {
 
 Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\SuperadminController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::get('/users', [\App\Http\Controllers\SuperadminController::class, 'usersIndex'])->name('superadmin.users.index');
+    Route::get('/users/{id}', [\App\Http\Controllers\SuperadminController::class, 'userShow'])->name('superadmin.users.show');
     Route::post('/users/{id}/approve', [\App\Http\Controllers\SuperadminController::class, 'approveUser'])->name('superadmin.users.approve');
     Route::post('/settings', [\App\Http\Controllers\SuperadminController::class, 'updateSettings'])->name('superadmin.settings.update');
+    Route::post('/site-profile', [\App\Http\Controllers\SuperadminController::class, 'updateSiteProfile'])->name('superadmin.site-profile.update');
 });
 
 Route::middleware('auth')->group(function () {
@@ -42,6 +46,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Midtrans webhook — no CSRF
+Route::post('/midtrans/notification', [\App\Http\Controllers\PublicPageController::class, 'midtransNotification'])
+    ->name('midtrans.notification')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 require __DIR__.'/auth.php';
 

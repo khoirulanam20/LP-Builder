@@ -22,11 +22,11 @@ class DashboardController extends Controller
             ->where('type', 'click')->count();
             
         $totalSales = Order::where('user_id', $user->id)
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'verified'])
             ->sum('total_amount');
             
         $totalOrders = Order::where('user_id', $user->id)
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'verified'])
             ->count();
 
         $pendingOrders = Order::where('user_id', $user->id)
@@ -39,13 +39,14 @@ class DashboardController extends Controller
 
         $ordersPerDay = $days->map(function($day) use ($user) {
             return Order::where('user_id', $user->id)
+                ->whereIn('status', ['completed', 'verified'])
                 ->whereDate('created_at', $day->toDateString())
                 ->count();
         })->toArray();
 
         $revenuePerDay = $days->map(function($day) use ($user) {
             return (float) Order::where('user_id', $user->id)
-                ->where('status', 'completed')
+                ->whereIn('status', ['completed', 'verified'])
                 ->whereDate('created_at', $day->toDateString())
                 ->sum('total_amount');
         })->toArray();
