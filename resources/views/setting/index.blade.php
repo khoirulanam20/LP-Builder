@@ -83,7 +83,7 @@
                 </div>
 
                 <!-- Custom Email Message Card -->
-                <div class="bg-white/60 backdrop-blur-xl shadow-xl rounded-3xl border border-white/50 flex flex-col">
+                <div class="bg-white/60 backdrop-blur-xl shadow-xl rounded-3xl border border-white/50 flex flex-col" x-data="{ customMsg: {{ json_encode(old('custom_email_message', $user->custom_email_message) ?? '') }} }">
                     <div class="p-8 text-gray-900 border-b border-gray-200/50 flex-1">
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
                             <svg class="w-6 h-6 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -96,7 +96,12 @@
                             <div class="text-sm text-gray-700 space-y-2 font-mono bg-white/80 p-4 rounded-xl border border-pink-100/50">
                                 <p>Halo <strong>[Nama Pembeli]</strong>,</p>
                                 <p>Terima kasih atas pesanan Anda untuk produk <strong>[Nama Produk]</strong>.</p>
-                                <p class="text-pink-600 bg-pink-50 inline-block px-2 py-1 rounded italic">{Pesan Custom Anda akan tampil di sini}</p>
+                                <template x-if="customMsg && customMsg.trim() !== ''">
+                                    <div class="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-2 rounded text-yellow-800 italic text-xs whitespace-pre-wrap" x-text="customMsg"></div>
+                                </template>
+                                <template x-if="!customMsg || customMsg.trim() === ''">
+                                    <p class="text-pink-600 bg-pink-50 inline-block px-2 py-1 rounded italic">{Pesan Custom Anda akan tampil di sini}</p>
+                                </template>
                                 <p>Berikut adalah akses produk Anda:<br>
                                 <a href="#" class="text-blue-600 underline">Link / Download File</a></p>
                             </div>
@@ -107,7 +112,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <x-input-label for="custom_email_message" value="Custom Email Message" class="text-xs font-bold text-gray-600" />
-                                    <textarea id="custom_email_message" name="custom_email_message" class="mt-1 block w-full bg-white/50 border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-xl shadow-sm" rows="6" placeholder="Misal: Terima kasih telah berbelanja! Silakan gabung ke grup Telegram kami di t.me/grup...">{{ old('custom_email_message', $user->custom_email_message) }}</textarea>
+                                    <textarea id="custom_email_message" name="custom_email_message" x-model="customMsg" class="mt-1 block w-full bg-white/50 border-gray-300 focus:border-pink-500 focus:ring-pink-500 rounded-xl shadow-sm" rows="6" placeholder="Misal: Terima kasih telah berbelanja! Silakan gabung ke grup Telegram kami di t.me/grup...">{{ old('custom_email_message', $user->custom_email_message) }}</textarea>
                                 </div>
                                 <button class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition transform hover:-translate-y-0.5">Simpan Pesan Email</button>
                             </div>

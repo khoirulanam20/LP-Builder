@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'is.approved' => \App\Http\Middleware\CheckIsApproved::class,
+            'superadmin' => \App\Http\Middleware\CheckSuperadmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

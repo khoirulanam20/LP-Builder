@@ -8,7 +8,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'is.approved'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/my-lp', [\App\Http\Controllers\MyLPController::class, 'index'])->name('my-lp.index');
     Route::post('/my-lp', [\App\Http\Controllers\MyLPController::class, 'update'])->name('my-lp.update');
@@ -29,6 +29,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/vouchers', [\App\Http\Controllers\VoucherController::class, 'index'])->name('vouchers.index');
     Route::post('/vouchers', [\App\Http\Controllers\VoucherController::class, 'store'])->name('vouchers.store');
     Route::delete('/vouchers/{id}', [\App\Http\Controllers\VoucherController::class, 'destroy'])->name('vouchers.destroy');
+});
+
+Route::middleware(['auth', 'superadmin'])->prefix('superadmin')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\SuperadminController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::post('/users/{id}/approve', [\App\Http\Controllers\SuperadminController::class, 'approveUser'])->name('superadmin.users.approve');
+    Route::post('/settings', [\App\Http\Controllers\SuperadminController::class, 'updateSettings'])->name('superadmin.settings.update');
 });
 
 Route::middleware('auth')->group(function () {

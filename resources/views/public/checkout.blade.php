@@ -106,7 +106,7 @@
                         <div class="w-12 h-12 bg-accent rounded-xl flex items-center justify-center text-primary text-xl shadow-inner mr-3">
                             <i class="fas fa-box"></i>
                         </div>
-                        <span class="text-sm font-bold text-dark">{{ $product->name }}</span>
+                        <span class="text-sm font-bold text-dark">{{ $product->name }} <span class="text-xs text-slate-400 font-medium ml-1">x {{ $qty }}</span></span>
                     </div>
                     <span class="font-bold text-dark text-sm">IDR {{ number_format($price, 0, ',', '.') }}</span>
                 </div>
@@ -140,9 +140,17 @@
                             <span>- IDR {{ number_format($discountAmount, 0, ',', '.') }}</span>
                         </div>
                     @endif
+
+                    @if($serviceFee > 0)
+                        <div class="flex justify-between items-center mb-3 text-sm text-slate-500 font-medium italic">
+                            <span>Biaya Layanan</span>
+                            <span>+ IDR {{ number_format($serviceFee, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
+
                     <div class="flex justify-between items-center mt-3 pt-4 border-t-2 border-dashed border-slate-200">
                         <span class="text-dark font-black tracking-wide pl-1">Total Transfer</span>
-                        <span class="text-primary font-black text-xl">IDR {{ number_format($totalAmount, 0, ',', '.') }}</span>
+                        <span class="text-primary font-black text-xl">IDR {{ number_format($grandTotal, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
@@ -151,6 +159,7 @@
             <form action="{{ route('public.checkout.process', $landingPage->slug) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
+                <input type="hidden" name="qty" value="{{ $qty }}">
                 
                 <h2 class="font-bold text-primary mb-4 uppercase tracking-wider text-xs italic"><i class="fas fa-user mr-2"></i>Data Pembeli</h2>
                 <div class="space-y-4 mb-8">
@@ -200,7 +209,7 @@
                 </div>
 
                 <button type="submit" class="w-full btn-shine bg-primary text-white font-black text-lg py-5 rounded-2xl shadow-[0_15px_30px_rgba(52,101,109,0.3)] animate-cta-btn flex justify-center items-center">
-                    <i class="fas fa-check-circle mr-2"></i> KONFIRMASI PEMBAYARAN
+                    KONFIRMASI PEMBAYARAN
                 </button>
             </form>
 

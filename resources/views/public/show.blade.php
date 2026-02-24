@@ -223,7 +223,7 @@
                 <h4 class="font-black text-dark text-xl mb-3 italic">Pesan Sekarang & Buktikan Kualitasnya!</h4>
                 <p class="text-xs text-slate-500 mb-8 px-4">Kemudahan mendapatkan produk impian. Tinggal tap dan selesaikan pesanan Anda sekarang juga.</p>
                 <a href="#mainPage" class="btn-shine bg-primary text-white block w-full py-5 rounded-2xl font-black text-xl animate-cta-btn shadow-2xl tracking-tight">
-                    <i class="fas fa-rocket mr-2"></i> LIHAT KATALOG
+                    LIHAT KATALOG
                 </a>
             </div>
             
@@ -258,7 +258,26 @@
                         </div>
                     </div>
                 </div>
-                
+
+                <!-- Quantity Selector -->
+                <div id="detailQtySection" style="margin-top:1.5rem;">
+                    <div style="background:#fff; border:1px solid #e2e8f0; padding:1.25rem 1.5rem; border-radius:1.5rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                            <div>
+                                <p style="font-weight:800; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:#121212; font-style:italic; margin:0; display:flex; align-items:center; gap:6px;">
+                                    <i class="fas fa-cubes" style="color:{{ $themeColor }};"></i>Jumlah Pembelian
+                                </p>
+                                <p id="detail-qty-label" style="font-size:0.72rem; color:#94a3b8; margin:4px 0 0 0;">Subtotal: —</p>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:0.5rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:1rem; padding:6px;">
+                                <button onclick="changeQtyOverlay(-1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:#fff; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#475569; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.08); flex-shrink:0;">&minus;</button>
+                                <span id="detail-qty-display" style="min-width:2rem; text-align:center; font-size:1.25rem; font-weight:900; color:#121212; user-select:none; display:inline-block;">1</span>
+                                <button onclick="changeQtyOverlay(1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:{{ $themeColor }}; border:none; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#fff; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.15); flex-shrink:0;">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="detailAddons" class="mt-8 hidden">
                     <h4 class="font-black text-dark text-sm uppercase tracking-widest mb-4 italic underline decoration-secondary decoration-4 underline-offset-4 pl-2">Add-ons Opsional</h4>
                     <div id="detailAddonsList" class="space-y-3">
@@ -270,7 +289,7 @@
             <div class="fixed bottom-8 left-0 w-full px-6 z-[110] flex justify-center">
                 <div class="w-full max-w-xl">
                     <a id="detailCTA" href="#" class="btn-shine bg-primary text-white flex items-center justify-center w-full py-5 rounded-2xl font-black text-xl text-center shadow-[0_20px_40px_rgba(52,101,109,0.3)] animate-cta-btn">
-                        <i class="fas fa-shopping-cart mr-2"></i> BELI SEKARANG
+                        BELI SEKARANG
                     </a>
                 </div>
             </div>
@@ -287,6 +306,7 @@
                 'title' => $p->name,
                 'priceStr' => $p->sale_price > 0 ? 'IDR '.number_format($p->sale_price, 0, ',', '.') : 'IDR '.number_format($p->price, 0, ',', '.'),
                 'oldPriceStr' => $p->sale_price > 0 ? 'IDR '.number_format($p->price, 0, ',', '.') : null,
+                'rawPrice' => $p->sale_price > 0 ? $p->sale_price : $p->price,
                 'img' => $p->image_path ? asset('storage/'.$p->image_path) : null,
                 'desc' => $p->description ?? 'Tidak ada deskripsi rincian untuk produk ini.',
                 'checkoutUrl' => $checkoutUrl,
@@ -349,7 +369,18 @@
             }
 
             // Set CTA Link
-            document.getElementById('detailCTA').href = p.checkoutUrl;
+            var baseCheckout = p.checkoutUrl;
+            var currentQty = 1;
+            var currentBasePrice = p.rawPrice;
+
+            // Reset qty
+            document.getElementById('detail-qty-display').textContent = 1;
+            document.getElementById('detail-qty-label').textContent = 'Subtotal: IDR ' + Number(p.rawPrice).toLocaleString('id-ID');
+            document.getElementById('detailCTA').href = baseCheckout + '&qty=1';
+
+            window._detailCheckoutBase = baseCheckout;
+            window._detailBasePrice = p.rawPrice;
+            window._detailQty = 1;
 
             // Show Overlay
             document.getElementById('detailOverlay').classList.add('detail-active');
@@ -359,6 +390,13 @@
         function hideDetail() {
             document.getElementById('detailOverlay').classList.remove('detail-active');
             document.body.style.overflow = 'auto';
+        }
+
+        function changeQtyOverlay(delta) {
+            window._detailQty = Math.max(1, (window._detailQty || 1) + delta);
+            document.getElementById('detail-qty-display').textContent = window._detailQty;
+            document.getElementById('detail-qty-label').textContent = 'Subtotal: IDR ' + (Number(window._detailBasePrice || 0) * window._detailQty).toLocaleString('id-ID');
+            document.getElementById('detailCTA').href = window._detailCheckoutBase + '&qty=' + window._detailQty;
         }
 
         // Testimonial Seamless Marquee

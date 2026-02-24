@@ -45,7 +45,10 @@
                                                 <div>{{ $order->customer_name ?? 'N/A' }}</div>
                                                 <div class="text-xs text-gray-500">{{ $order->customer_email }}</div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ optional($order->product)->name ?? 'Unknown' }}</td>
+                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ optional($order->product)->name ?? 'Unknown' }}
+                                                <span class="text-xs text-gray-400 block mt-0.5">Qty: {{ $order->quantity }}</span>
+                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($order->status == 'pending')

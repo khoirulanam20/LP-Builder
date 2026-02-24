@@ -111,6 +111,50 @@
                 </div>
             </div>
 
+            <!-- Quantity Selector -->
+            <div style="margin-top:1.5rem;">
+                <div style="background:#fff; border:1px solid #e2e8f0; padding:1.25rem 1.5rem; border-radius:1.5rem; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+                        <div>
+                            <p style="font-weight:800; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em; color:#121212; font-style:italic; margin:0; display:flex; align-items:center; gap:6px;">
+                                <i class="fas fa-cubes" style="color:{{ $themeColor }};"></i>Jumlah Pembelian
+                            </p>
+                            <p id="qty-total-label" style="font-size:0.72rem; color:#94a3b8; margin:4px 0 0 0;">
+                                Subtotal: IDR {{ number_format($product->sale_price && $product->sale_price > 0 ? $product->sale_price : $product->price, 0, ',', '.') }}
+                            </p>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:0.5rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:1rem; padding:6px;">
+                            <button id="qty-minus" onclick="changeQty(-1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:#fff; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#475569; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.08); flex-shrink:0;">
+                                &minus;
+                            </button>
+                            <span id="qty-display" style="min-width:2rem; text-align:center; font-size:1.25rem; font-weight:900; color:#121212; user-select:none; display:inline-block;">1</span>
+                            <button id="qty-plus" onclick="changeQty(1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:{{ $themeColor }}; border:none; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#fff; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.15); flex-shrink:0;">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                var qtyVal = 1;
+                var basePrice = {{ $product->sale_price && $product->sale_price > 0 ? $product->sale_price : $product->price }};
+                var checkoutBase = '{{ route('public.checkout', ['slug' => $landingPage->slug, 'product_id' => $product->id]) }}';
+
+                function formatRupiah(num) {
+                    return 'IDR ' + num.toLocaleString('id-ID');
+                }
+
+                function changeQty(delta) {
+                    qtyVal = Math.max(1, qtyVal + delta);
+                    document.getElementById('qty-display').textContent = qtyVal;
+                    document.getElementById('qty-total-label').textContent = 'Subtotal: ' + formatRupiah(basePrice * qtyVal);
+                    // update the buy button href
+                    var btn = document.getElementById('btn-beli');
+                    btn.href = checkoutBase + '&qty=' + qtyVal;
+                }
+            </script>
+
             <!-- Add-ons Opsional -->
             @if($product->addOns && count($product->addOns) > 0)
             <div class="mt-8">
@@ -129,7 +173,7 @@
 
         <div class="fixed bottom-8 left-0 w-full px-6 z-[110] flex justify-center">
             <div class="w-full max-w-xl">
-                <a href="{{ route('public.checkout', ['slug' => $landingPage->slug, 'product_id' => $product->id]) }}" class="btn-shine bg-primary text-white flex items-center justify-center w-full py-5 rounded-2xl font-black text-xl text-center shadow-[0_20px_40px_rgba(52,101,109,0.3)] animate-cta-btn">
+                <a id="btn-beli" href="{{ route('public.checkout', ['slug' => $landingPage->slug, 'product_id' => $product->id]) }}&qty=1" class="btn-shine bg-primary text-white flex items-center justify-center w-full py-5 rounded-2xl font-black text-xl text-center shadow-[0_20px_40px_rgba(52,101,109,0.3)] animate-cta-btn">
                     <i class="fas fa-shopping-cart mr-2"></i> BELI SEKARANG
                 </a>
             </div>
