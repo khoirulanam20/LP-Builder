@@ -240,22 +240,29 @@ class PublicPageController extends Controller
         $this->configureMidtrans();
 
         try {
-            // Signature Verification
-            $serverKey = SystemSetting::where('key', 'midtrans_server_key')->value('value');
-            $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
+            $notif = new Notification();
+            
+            // Signature Verification using Notification object
+            $serverKey = SystemSetting::where('key', 'midtrans_server_key')->value('value') ?? config('services.midtrans.server_key');
+            $hashed = hash("sha512", $notif->order_id . $notif->status_code . $notif->gross_amount . $serverKey);
 
-            if ($hashed !== $request->signature_key) {
+            if ($hashed !== $notif->signature_key) {
                 Log::error('Midtrans signature verification failed!', [
-                    'order_id' => $request->order_id,
-                    'received' => $request->signature_key
+                    'order_id' => $notif->order_id,
+                    'received' => $notif->signature_key
                 ]);
                 return response()->json(['message' => 'Invalid signature'], 403);
             }
 
-            $notif             = new Notification();
             $transactionStatus = $notif->transaction_status;
             $fraudStatus       = $notif->fraud_status;
             $orderId           = $notif->order_id;
+
+            Log::info('Midtrans Notification received', [
+                'order_id' => $orderId,
+                'status'   => $transactionStatus,
+                'payment_type' => $notif->payment_type
+            ]);
 
             $order = Order::where('midtrans_order_id', $orderId)->first();
             if (!$order) {
@@ -263,7 +270,7 @@ class PublicPageController extends Controller
                 return response()->json(['message' => 'Order not found'], 404);
             }
 
-            $this->syncOrderWithMidtrans($order);
+            $this->processStatus($order, $transactionStatus, $fraudStatus, $notif->payment_type);
 
             return response()->json(['message' => 'Notification processed successfully']);
         } catch (\Exception $e) {
