@@ -211,21 +211,21 @@
                             <div class="flex-1 overflow-y-auto w-full relative pb-20" style="background-color:#FAF8F1;">
                                 
                                 <!-- Header -->
-                                <div class="relative rounded-b-[2rem] overflow-hidden shadow-md" style="background:#121212; padding: 2.5rem 1rem 1.5rem; text-align:center;">
+                                <div class="relative rounded-b-3xl overflow-hidden shadow-sm border-b border-gray-100" style="background:#ffffff; padding: 2.5rem 1rem 1.5rem; text-align:center;">
                                     <template x-if="imagePreview">
                                         <div class="absolute inset-0 opacity-20 bg-cover bg-center" :style="'background-image: url(' + imagePreview + ')'"></div>
                                     </template>
 
                                     <div class="relative z-10">
                                         <div class="relative inline-block mb-3">
-                                            <div class="w-16 h-16 rounded-full mx-auto border-4 flex items-center justify-center text-white text-2xl font-bold shadow-md" style="border-color:#FAEAB1;" :style="'background:' + themeColor">
+                                            <div class="w-16 h-16 rounded-full mx-auto border border-gray-100 flex items-center justify-center text-white text-2xl font-bold shadow-sm" :style="'background:' + themeColor">
                                                 <span x-text="title.charAt(0) || 'L'" style="display:block;"></span>
                                             </div>
-                                            <div class="absolute bottom-0 right-0 w-4 h-4 rounded-full border-2" style="background:#22c55e; border-color:#121212;"></div>
+                                            <div class="absolute bottom-0 right-0 w-4 h-4 rounded-full border-2" style="background:#22c55e; border-color:#ffffff;"></div>
                                         </div>
 
-                                        <div class="font-bold text-white text-sm tracking-tight leading-tight" x-text="title || 'My Landing Page'"></div>
-                                        <div class="text-xs mt-1 px-2 leading-relaxed" style="color:#FAEAB1;" x-text="description || 'Deskripsi halaman Anda...'"></div>
+                                        <div class="font-extrabold text-gray-900 text-sm tracking-tight leading-tight" x-text="title || 'My Landing Page'"></div>
+                                        <div class="text-xs mt-1 px-2 leading-relaxed" style="color:#6b7280;" x-text="description || 'Deskripsi halaman Anda...'"></div>
                                     </div>
                                 </div>
 
@@ -267,9 +267,9 @@
                                 </div>
 
                                 <div class="px-3 mt-6">
-                                    <div class="font-black text-[11px] italic text-center" style="color:#121212;">Pesan Sekarang & Buktikan!</div>
-                                    <div class="mt-3 text-white font-black text-center text-[10px] py-3 rounded-xl shadow-md" :style="'background:' + themeColor">
-                                        🚀 LIHAT KATALOG
+                                    <div class="font-bold text-gray-900 text-[11px] text-center mb-1">Pesan Sekarang!</div>
+                                    <div class="mt-3 text-white font-bold text-center text-[10px] py-3 rounded-lg shadow-sm" :style="'background:' + themeColor">
+                                        LIHAT KATALOG
                                     </div>
                                 </div>
                             </div>

@@ -3,16 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ Str::limit(strip_tags($landingPage->description ?? $landingPage->title), 150) }}">
+    <meta name="theme-color" content="{{ $landingPage->appearance->theme_color ?? '#34656D' }}">
     <title>{{ $landingPage->title }}</title>
+    
+    <!-- Preconnect & DNS Prefetch -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+    
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
     
     @php
         $themeColor = $landingPage->appearance->theme_color ?? '#34656D';
         // Add dynamic secondary/accent colors based on what fits - for now we hardcode complementary ones based on user reference
         $pulseColor = $themeColor . '66';
         $pulseColorZero = $themeColor . '00';
+        
+        $hex = ltrim($themeColor, '#');
+        $r = hexdec(strlen($hex) == 3 ? str_repeat(substr($hex, 0, 1), 2) : substr($hex, 0, 2));
+        $g = hexdec(strlen($hex) == 3 ? str_repeat(substr($hex, 1, 1), 2) : substr($hex, 2, 2));
+        $b = hexdec(strlen($hex) == 3 ? str_repeat(substr($hex, 2, 1), 2) : substr($hex, 4, 2));
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+        $primaryTextColor = $luminance > 0.6 ? '#121212' : '#ffffff';
     @endphp
 
     <script>
@@ -21,73 +42,43 @@
                 extend: {
                     colors: {
                         primary: '{{ $themeColor }}',
-                        secondary: '#FAEAB1',
-                        accent: '#FAF8F1',
-                        dark: '#121212'
+                        'primary-text': '{{ $primaryTextColor }}',
+                        secondary: '#F1F5F9',
+                        accent: '#FFFFFF',
+                        dark: '#0F172A'
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #FAF8F1; }
-        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-        .product-card:hover { transform: scale(1.02); }
+        body { background-color: #F8FAFC; }
+        .product-card { transition: all 0.2s ease; cursor: pointer; }
+        .product-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); border-color: {{ $themeColor }}33; }
         
-        /* Animasi Berdenyut untuk tombol utama */
-        @keyframes custom-pulse {
-            0% { box-shadow: 0 0 0 0 {{ $pulseColor }}; }
-            70% { box-shadow: 0 0 0 15px {{ $pulseColorZero }}; }
-            100% { box-shadow: 0 0 0 0 {{ $pulseColorZero }}; }
-        }
-        .animate-cta-btn { animation: custom-pulse 2s infinite; }
-
-        /* Seamless Marquee Testimonial */
-        .testimonialSwiper .swiper-wrapper {
-            transition-timing-function: linear !important;
+        .animate-cta-btn { animation: soft-pulse 2s infinite; }
+        @keyframes soft-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; box-shadow: 0 4px 20px -2px {{ $pulseColor }}; }
         }
 
-        /* Shine Effect */
-        .btn-shine {
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-shine::after {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -60%;
-            width: 20%;
-            height: 200%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: rotate(30deg);
-            animation: shine-effect 3s infinite;
-        }
-        @keyframes shine-effect {
-            0% { left: -60%; }
-            20% { left: 120%; }
-            100% { left: 120%; }
-        }
+        .testimonialSwiper .swiper-wrapper { transition-timing-function: linear !important; }
 
-        /* Detail Page Overlay */
         .detail-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #FAF8F1;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(8px);
             z-index: 100;
             overflow-y: auto;
         }
-        .detail-active { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .detail-active { display: block; animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(52, 101, 109, 0.1);
+            background: #ffffff;
+            border: 1px solid #E2E8F0;
         }
     </style>
 </head>
@@ -109,7 +100,7 @@
             </script>
         @endif
         
-        <header class="pt-12 pb-8 px-6 text-center bg-dark text-white rounded-b-[3rem] shadow-xl relative overflow-hidden">
+        <header class="pt-12 pb-10 px-6 text-center bg-white border-b border-gray-100 relative overflow-hidden shadow-sm">
             @if($landingPage->image_path)
                 <div class="absolute inset-0 opacity-20 bg-cover bg-center" style="background-image: url('{{ asset('storage/' . $landingPage->image_path) }}')"></div>
             @endif
@@ -117,28 +108,28 @@
             <div class="relative z-10">
                 <div class="mb-6 relative inline-block">
                     @if($landingPage->appearance && $landingPage->appearance->logo_path)
-                        <img src="{{ asset('storage/' . $landingPage->appearance->logo_path) }}" alt="Logo" class="w-24 h-24 object-cover rounded-full border-4 border-secondary mx-auto shadow-lg bg-white">
+                        <img src="{{ asset('storage/' . $landingPage->appearance->logo_path) }}" alt="Logo" fetchpriority="high" class="w-24 h-24 object-cover rounded-full border border-gray-100 mx-auto shadow-sm bg-white">
                     @else
                         <!-- Fallback Logo if not provided -->
-                        <div class="w-24 h-24 rounded-full border-4 border-secondary mx-auto shadow-lg bg-primary flex items-center justify-center text-white text-4xl font-bold">
+                        <div class="w-24 h-24 rounded-full border border-gray-100 mx-auto shadow-sm bg-primary flex items-center justify-center text-primary-text text-4xl font-bold">
                             {{ substr($landingPage->title, 0, 1) }}
                         </div>
                     @endif
-                    <div class="absolute bottom-0 right-0 bg-green-500 w-6 h-6 rounded-full border-4 border-dark"></div>
+                    <div class="absolute bottom-0 right-0 bg-green-500 w-5 h-5 rounded-full border-2 border-white"></div>
                 </div>
                 
-                <h1 class="text-2xl font-bold tracking-tight">{{ $landingPage->title }}</h1>
+                <h1 class="text-2xl font-extrabold tracking-tight text-gray-900">{{ $landingPage->title }}</h1>
                 
                 @if($landingPage->description)
-                    <p class="mt-4 text-secondary font-medium px-4 text-sm">{{ $landingPage->description }}</p>
+                    <p class="mt-3 text-gray-500 font-medium px-4 text-sm">{{ $landingPage->description }}</p>
                 @endif
                 
                 @if($landingPage->appearance && $landingPage->appearance->about_text)
-                    <p class="mt-2 text-gray-300 px-4 text-xs">{{ $landingPage->appearance->about_text }}</p>
+                    <p class="mt-2 text-gray-400 px-4 text-xs">{{ $landingPage->appearance->about_text }}</p>
                 @endif
                 
                 @if($landingPage->appearance && $landingPage->appearance->social_links)
-                    <div class="flex justify-center flex-wrap gap-6 mt-6">
+                    <div class="flex justify-center flex-wrap gap-5 mt-6">
                         @foreach($landingPage->appearance->social_links as $platform => $url)
                             @php
                                 $icon = 'fa-globe';
@@ -149,7 +140,7 @@
                                 elseif(stripos($platform, 'facebook') !== false) $icon = 'fa-facebook';
                                 elseif(stripos($platform, 'twitter') !== false) $icon = 'fa-twitter';
                             @endphp
-                            <a href="{{ $url }}" target="_blank" class="text-secondary hover:text-white transition text-xl">
+                            <a href="{{ $url }}" target="_blank" class="text-gray-400 hover:text-primary transition text-xl">
                                 <i class="fab {{ $icon }}"></i>
                             </a>
                         @endforeach
@@ -159,13 +150,13 @@
         </header>
 
         <section class="px-4 py-8 space-y-4">
-            <h2 class="text-center font-black text-dark text-xl uppercase tracking-widest mb-6 italic underline decoration-secondary decoration-4 underline-offset-8">Katalog Produk</h2>
+            <h2 class="font-bold text-gray-900 text-lg mb-6">Katalog Produk</h2>
 
             @forelse($landingPage->products as $product)
                 <div onclick="showDetail({{ $product->id }})" class="product-card group relative bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex items-center p-3 hover:border-primary">
                     <div class="w-20 h-20 bg-accent rounded-xl flex-shrink-0 flex items-center justify-center text-primary text-2xl overflow-hidden shadow-inner">
                         @if($product->image_path)
-                            <img src="{{ asset('storage/' . $product->image_path) }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/' . $product->image_path) }}" loading="lazy" class="w-full h-full object-cover">
                         @else
                             <i class="fas fa-layer-group"></i>
                         @endif
@@ -182,7 +173,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="ml-2 border border-slate-200 text-slate-400 p-3 rounded-full group-hover:bg-primary group-hover:text-white transition">
+                    <div class="ml-2 text-gray-300 p-2 rounded-full group-hover:text-primary transition">
                         <i class="fas fa-chevron-right"></i>
                     </div>
                 </div>
@@ -194,7 +185,7 @@
         <!-- Dynamic Testimonials -->
         @if($landingPage->reviews && $landingPage->reviews->where('is_approved', true)->count() > 0)
             <section class="py-10 bg-accent border-y border-slate-200">
-                <p class="text-center text-[11px] font-black text-slate-400 uppercase tracking-widest mb-6">Real Reviews dari Pembeli</p>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6">Real Reviews dari Pembeli</p>
                 <div class="swiper testimonialSwiper">
                     <div class="swiper-wrapper">
                         @foreach($landingPage->reviews->where('is_approved', true) as $review)
@@ -220,15 +211,15 @@
 
         <footer class="p-8 text-center bg-white">
             <div class="mb-10">
-                <h4 class="font-black text-dark text-xl mb-3 italic">Pesan Sekarang & Buktikan Kualitasnya!</h4>
-                <p class="text-xs text-slate-500 mb-8 px-4">Kemudahan mendapatkan produk impian. Tinggal tap dan selesaikan pesanan Anda sekarang juga.</p>
-                <a href="#mainPage" class="btn-shine bg-primary text-white block w-full py-5 rounded-2xl font-black text-xl animate-cta-btn shadow-2xl tracking-tight">
+                <h4 class="font-extrabold text-gray-900 text-lg mb-2">Pesan Sekarang!</h4>
+                <p class="text-xs text-gray-500 mb-6 px-4">Kemudahan mendapatkan produk impian. Pesan sekarang juga.</p>
+                <a href="#mainPage" class="bg-primary text-primary-text block w-full py-4 rounded-xl font-bold text-lg animate-cta-btn shadow-md transition hover:bg-opacity-90">
                     LIHAT KATALOG
                 </a>
             </div>
             
             <div class="pt-8 border-t border-slate-100">
-                <div class="text-2xl font-bold text-primary tracking-tighter mb-2">{{ $landingPage->title }}</div>
+                <div class="text-2xl font-bold text-gray-900 tracking-tighter mb-2">{{ $landingPage->title }}</div>
                 <p class="text-[10px] text-slate-400 font-medium">&copy; {{ date('Y') }} All Rights Reserved. Powered by LP Builder.</p>
             </div>
         </footer>
@@ -241,7 +232,7 @@
                 <i class="fas fa-arrow-left"></i>
             </button>
 
-            <div id="detailHero" class="w-full h-80 bg-slate-200 overflow-hidden rounded-b-[3rem] shadow-lg relative flex items-center justify-center">
+            <div id="detailHero" class="w-full h-80 bg-gray-100 overflow-hidden relative flex items-center justify-center border-b border-gray-100">
                 <!-- dynamic image injected via JS -->
             </div>
 
@@ -251,8 +242,8 @@
                 </div>
 
                 <div class="mt-8">
-                    <div class="glass-card p-6 rounded-3xl">
-                        <h4 class="font-bold text-primary mb-3 uppercase tracking-wider text-xs italic"><i class="fas fa-info-circle mr-2"></i>Deskripsi Produk</h4>
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h4 class="font-bold text-gray-900 mb-3 text-sm">Deskripsi Produk</h4>
                         <div id="detailDesc" class="text-sm leading-relaxed text-slate-600 prose prose-sm max-w-none">
                             <!-- dynamic desc injected via JS -->
                         </div>
@@ -272,7 +263,7 @@
                             <div style="display:flex; align-items:center; gap:0.5rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:1rem; padding:6px;">
                                 <button onclick="changeQtyOverlay(-1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:#fff; border:1px solid #e2e8f0; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#475569; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,0.08); flex-shrink:0;">&minus;</button>
                                 <span id="detail-qty-display" style="min-width:2rem; text-align:center; font-size:1.25rem; font-weight:900; color:#121212; user-select:none; display:inline-block;">1</span>
-                                <button onclick="changeQtyOverlay(1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:{{ $themeColor }}; border:none; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:#fff; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.15); flex-shrink:0;">+</button>
+                                <button onclick="changeQtyOverlay(1)" style="width:2.25rem; height:2.25rem; border-radius:0.625rem; background:{{ $themeColor }}; border:none; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900; color:{{ $primaryTextColor }}; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.15); flex-shrink:0;">+</button>
                             </div>
                         </div>
                     </div>
@@ -288,7 +279,7 @@
 
             <div class="fixed bottom-8 left-0 w-full px-6 z-[110] flex justify-center">
                 <div class="w-full max-w-xl">
-                    <a id="detailCTA" href="#" class="btn-shine bg-primary text-white flex items-center justify-center w-full py-5 rounded-2xl font-black text-xl text-center shadow-[0_20px_40px_rgba(52,101,109,0.3)] animate-cta-btn">
+                    <a id="detailCTA" href="#" class="bg-primary text-primary-text flex items-center justify-center w-full py-4 rounded-xl font-bold text-lg text-center shadow-md animate-cta-btn transition hover:bg-opacity-90">
                         BELI SEKARANG
                     </a>
                 </div>
@@ -320,7 +311,7 @@
         }
     @endphp
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
         const products = {!! json_encode($productsData) !!};
 
@@ -331,7 +322,7 @@
             // Set Image
             const heroEl = document.getElementById('detailHero');
             if(p.img) {
-                heroEl.innerHTML = `<img src="${p.img}" class="w-full h-full object-cover">`;
+                heroEl.innerHTML = `<img src="${p.img}" loading="lazy" class="w-full h-full object-cover">`;
             } else {
                 heroEl.innerHTML = `<i class="fas fa-box text-6xl text-slate-400"></i>`;
             }
@@ -359,7 +350,7 @@
                 addonsList.innerHTML = p.addons.map(a => `
                     <div class="bg-accent p-4 rounded-xl flex justify-between items-center border border-slate-200 shadow-sm">
                         <span class="text-sm font-semibold text-slate-700">${a.name}</span>
-                        <span class="text-xs font-bold text-white bg-primary px-3 py-1.5 rounded-lg shadow">${a.priceStr}</span>
+                        <span class="text-xs font-bold text-primary-text bg-primary px-3 py-1.5 rounded-lg shadow">${a.priceStr}</span>
                     </div>
                 `).join('');
                 addonsContainer.classList.remove('hidden');
@@ -400,15 +391,19 @@
         }
 
         // Testimonial Seamless Marquee
-        new Swiper(".testimonialSwiper", {
-            slidesPerView: "auto",
-            spaceBetween: 15,
-            loop: true,
-            speed: 5000,
-            allowTouchMove: false,
-            autoplay: {
-                delay: 0,
-                disableOnInteraction: false,
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Swiper !== 'undefined' && document.querySelector(".testimonialSwiper")) {
+                new Swiper(".testimonialSwiper", {
+                    slidesPerView: "auto",
+                    spaceBetween: 15,
+                    loop: true,
+                    speed: 5000,
+                    allowTouchMove: false,
+                    autoplay: {
+                        delay: 0,
+                        disableOnInteraction: false,
+                    }
+                });
             }
         });
     </script>

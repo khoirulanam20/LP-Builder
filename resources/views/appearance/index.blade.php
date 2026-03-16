@@ -26,12 +26,18 @@
                                 
                                 <div class="mb-4">
                                     <x-input-label for="slug" value="Custom URL (Slug)" />
-                                    <div class="flex mt-1">
-                                        <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                    <div class="flex mt-1 relative">
+                                        <span id="base-url" class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
                                             {{ url('/') }}/
                                         </span>
-                                        <input type="text" name="slug" id="slug" value="{{ old('slug', $landingPage->slug) }}" class="flex-1 block w-full rounded-none rounded-r-md sm:text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        <input type="text" name="slug" id="slug" value="{{ old('slug', $landingPage->slug) }}" class="flex-1 block w-full rounded-none sm:text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500" required>
+                                        <button type="button" onclick="copySlugUrl()" class="inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 rounded-r-md bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" title="Copy URL">
+                                            <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                                            </svg>
+                                        </button>
                                     </div>
+                                    <p id="copy-feedback" class="mt-1 text-sm text-green-600 hidden transition-opacity duration-300">URL copied to clipboard!</p>
                                     <x-input-error class="mt-2" :messages="$errors->get('slug')" />
                                 </div>
 
@@ -107,4 +113,21 @@
             </div>
         </div>
     </div>
+    <script>
+        function copySlugUrl() {
+            const baseUrl = document.getElementById('base-url').innerText.trim();
+            const slug = document.getElementById('slug').value.trim();
+            const fullUrl = baseUrl + slug;
+            
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                const feedback = document.getElementById('copy-feedback');
+                feedback.classList.remove('hidden');
+                setTimeout(() => {
+                    feedback.classList.add('hidden');
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
 </x-app-layout>
