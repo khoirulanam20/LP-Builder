@@ -16,67 +16,41 @@
 
             <!-- Split Layout for Settings -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Payment Methods Card -->
+                <!-- Meta Pixel Settings Card -->
                 <div class="bg-white/60 backdrop-blur-xl shadow-xl rounded-3xl border border-white/50 flex flex-col">
                     <div class="p-8 text-gray-900 border-b border-gray-200/50 flex-1">
                         <h3 class="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                            Payment Methods
+                            <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            Meta Pixel Configuration
                         </h3>
-                        <p class="text-sm text-gray-600 mb-6">Tambahkan metode pembayaran manual. Pembeli akan mentransfer ke rekening ini.</p>
+                        <p class="text-sm text-gray-600 mb-6">Hubungkan Meta Pixel Anda untuk melacak kunjungan dan konversi penjualan secara otomatis.</p>
                         
-                        @if($paymentMethods->isEmpty())
-                            <p class="text-gray-500 text-sm mb-6 bg-gray-50/80 p-4 rounded-xl border border-gray-100/80">Belum ada metode pembayaran yang ditambahkan.</p>
-                        @else
-                            <div class="space-y-4 mb-8">
-                                @foreach($paymentMethods as $pm)
-                                    <div class="bg-white/80 border border-gray-100 rounded-2xl p-5 shadow-sm relative group">
-                                        <h4 class="font-bold text-gray-800 text-lg">{{ $pm->name }}</h4>
-                                        <div class="text-sm text-gray-600 mt-2 space-y-1">
-                                            <div class="flex justify-between"><span class="font-medium text-gray-500">Bank/Provider:</span> <span>{{ $pm->bank_name ?? '-' }}</span></div>
-                                            <div class="flex justify-between"><span class="font-medium text-gray-500">Account No:</span> <span class="text-indigo-600 font-mono font-bold">{{ $pm->account_number ?? '-' }}</span></div>
-                                        </div>
-                                        @if($pm->instructions)
-                                        <div class="text-xs text-gray-500 mt-4 pt-3 border-t border-gray-100">
-                                            {{ $pm->instructions }}
-                                        </div>
-                                        @endif
-                                        
-                                        <form action="{{ route('setting.payment.destroy', $pm->id) }}" method="POST" class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" onsubmit="return confirm('Hapus metode pembayaran ini?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg transition-colors">
-                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                @endforeach
+                        <div class="bg-indigo-50/50 border border-indigo-100/50 rounded-2xl p-6 mb-8 shadow-sm">
+                            <div class="flex items-start gap-4">
+                                <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-black text-indigo-600 mb-1 uppercase tracking-widest">Cara Mendapatkan ID</h4>
+                                    <p class="text-[11px] text-indigo-900 leading-relaxed font-medium">Buka Meta Events Manager, pilih Data Source Anda, dan salin <b>Pixel ID</b> (angka) pada tab Settings.</p>
+                                </div>
                             </div>
-                        @endif
+                        </div>
 
-                        <h4 class="text-md font-bold text-gray-800 mb-4 border-t border-gray-200/50 pt-6">Add New Method</h4>
-                        <form method="POST" action="{{ route('setting.payment.store') }}">
+                        <form method="POST" action="{{ route('setting.meta-pixel.update') }}">
                             @csrf
                             <div class="space-y-4">
                                 <div>
-                                    <x-input-label for="name" value="Method Name (e.g. BCA, OVO)" class="text-xs font-bold text-gray-600" />
-                                    <x-text-input id="name" name="name" type="text" class="mt-1 block w-full rounded-xl bg-white/50 border-gray-300" required />
+                                    <x-input-label for="meta_pixel_id" value="Meta Pixel ID" class="text-xs font-bold text-gray-600" />
+                                    <x-text-input id="meta_pixel_id" name="meta_pixel_id" type="text" class="mt-1 block w-full rounded-xl bg-white/50 border-gray-300" placeholder="Contoh: 123456789012345" value="{{ old('meta_pixel_id', $user->meta_pixel_id) }}" />
+                                    @error('meta_pixel_id')
+                                        <p class="mt-1 text-xs text-red-500 font-bold italic">{{ $message }}</p>
+                                    @enderror
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <x-input-label for="bank_name" value="Bank Name" class="text-xs font-bold text-gray-600" />
-                                        <x-text-input id="bank_name" name="bank_name" type="text" class="mt-1 block w-full rounded-xl bg-white/50 border-gray-300" />
-                                    </div>
-                                    <div>
-                                        <x-input-label for="account_number" value="Account No" class="text-xs font-bold text-gray-600" />
-                                        <x-text-input id="account_number" name="account_number" type="text" class="mt-1 block w-full rounded-xl bg-white/50 border-gray-300" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <x-input-label for="instructions" value="Payment Instructions (Optional)" class="text-xs font-bold text-gray-600" />
-                                    <textarea id="instructions" name="instructions" class="mt-1 block w-full bg-white/50 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl shadow-sm" rows="2"></textarea>
-                                </div>
-                                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition transform hover:-translate-y-0.5">Save Method</button>
+                                
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition transform hover:-translate-y-0.5">
+                                    Simpan Konfigurasi Pixel
+                                </button>
                             </div>
                         </form>
                     </div>

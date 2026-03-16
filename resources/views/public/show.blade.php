@@ -81,6 +81,7 @@
             border: 1px solid #E2E8F0;
         }
     </style>
+    @include('public.partials.meta_pixel')
 </head>
 <body class="text-slate-800 font-sans">
 

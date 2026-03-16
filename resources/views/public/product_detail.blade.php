@@ -48,6 +48,7 @@
     </script>
     <style>
         body { background-color: #F8FAFC; }
+        .product-card { transition: all 0.2s ease; cursor: pointer; }
         
         @keyframes soft-pulse {
             0%, 100% { opacity: 1; }
@@ -68,6 +69,7 @@
             to { transform: translateY(0); opacity: 1; } 
         }
     </style>
+    @include('public.partials.meta_pixel')
 </head>
 <body class="text-slate-800 font-sans">
     <div class="max-w-xl mx-auto min-h-screen bg-white relative pb-32 animation-slide-up shadow-sm">

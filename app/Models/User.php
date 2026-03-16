@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',
         'is_approved',
         'custom_email_message',
+        'meta_pixel_id',
     ];
 
     /**

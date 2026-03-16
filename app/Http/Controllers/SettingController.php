@@ -54,4 +54,17 @@ class SettingController extends Controller
 
         return redirect()->route('setting.index')->with('status', 'Custom email message updated.');
     }
+
+    public function updateMetaPixel(Request $request)
+    {
+        $request->validate([
+            'meta_pixel_id' => 'nullable|string|max:255'
+        ]);
+
+        $request->user()->update([
+            'meta_pixel_id' => $request->meta_pixel_id
+        ]);
+
+        return redirect()->route('setting.index')->with('status', 'Meta Pixel ID updated successfully.');
+    }
 }

@@ -48,6 +48,20 @@
         body { background-color: #F8FAFC; }
         .glass-card { background: #ffffff; border: 1px solid #E2E8F0; }
     </style>
+
+    @include('public.partials.meta_pixel')
+
+    @if(isset($landingPage->user->meta_pixel_id) && $landingPage->user->meta_pixel_id && isset($order))
+    <script>
+        fbq('track', 'Purchase', {
+            value: {{ $order->total_amount }},
+            currency: 'IDR',
+            content_name: '{{ $order->product->name }}',
+            content_ids: ['{{ $order->product_id }}'],
+            content_type: 'product'
+        });
+    </script>
+    @endif
 </head>
 <body class="text-slate-800 font-sans min-h-screen relative py-10 flex items-center justify-center">
 

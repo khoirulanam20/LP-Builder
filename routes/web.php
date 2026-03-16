@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified', 'is.approved'])->group(function () {
     Route::post('/setting/payment', [\App\Http\Controllers\SettingController::class, 'storePayment'])->name('setting.payment.store');
     Route::delete('/setting/payment/{id}', [\App\Http\Controllers\SettingController::class, 'destroyPayment'])->name('setting.payment.destroy');
     Route::post('/setting/email', [\App\Http\Controllers\SettingController::class, 'updateEmail'])->name('setting.email.update');
+    Route::post('/setting/meta-pixel', [\App\Http\Controllers\SettingController::class, 'updateMetaPixel'])->name('setting.meta-pixel.update');
     
     Route::get('/vouchers', [\App\Http\Controllers\VoucherController::class, 'index'])->name('vouchers.index');
     Route::post('/vouchers', [\App\Http\Controllers\VoucherController::class, 'store'])->name('vouchers.store');

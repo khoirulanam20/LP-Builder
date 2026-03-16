@@ -60,6 +60,8 @@
         .animate-cta-btn { animation: soft-pulse 2s infinite; }
         #pay-btn:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
     </style>
+
+    @include('public.partials.meta_pixel')
 </head>
 <body class="text-slate-800 font-sans min-h-screen relative pb-10">
 

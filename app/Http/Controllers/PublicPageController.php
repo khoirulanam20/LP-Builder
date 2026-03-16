@@ -40,7 +40,7 @@ class PublicPageController extends Controller
     // ── Public pages ─────────────────────────────────────────────────
     public function show(Request $request, $slug)
     {
-        $landingPage = LandingPage::with(['appearance', 'products' => function($q) {
+        $landingPage = LandingPage::with(['user', 'appearance', 'products' => function($q) {
             $q->with('addOns');
         }])->where('slug', $slug)->firstOrFail();
 
@@ -72,7 +72,7 @@ class PublicPageController extends Controller
 // ── Checkout (GET) ───────────────────────────
     public function checkout(Request $request, $slug)
     {
-        $landingPage = LandingPage::where('slug', $slug)->firstOrFail();
+        $landingPage = LandingPage::with('user')->where('slug', $slug)->firstOrFail();
         $productId   = $request->query('product_id');
         $qty         = max(1, (int)$request->query('qty', 1));
 
@@ -139,7 +139,7 @@ class PublicPageController extends Controller
     // ── Checkout (POST) — generate Snap token dynamically ──
     public function processCheckout(Request $request, $slug)
     {
-        $landingPage = LandingPage::where('slug', $slug)->firstOrFail();
+        $landingPage = LandingPage::with('user')->where('slug', $slug)->firstOrFail();
         $product     = Product::where('landing_page_id', $landingPage->id)
                                ->findOrFail($request->product_id);
 
@@ -282,7 +282,7 @@ class PublicPageController extends Controller
     // ── Success page ─────────────────────────────────────────────────
     public function success(Request $request, $slug)
     {
-        $landingPage = LandingPage::where('slug', $slug)->firstOrFail();
+        $landingPage = LandingPage::with(['user', 'appearance'])->where('slug', $slug)->firstOrFail();
         $order = null;
 
         // Automatic sync if order_id is present (from redirect)
