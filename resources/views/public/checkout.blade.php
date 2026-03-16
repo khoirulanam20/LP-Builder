@@ -142,7 +142,6 @@
 
             <!-- Midtrans notice -->
             <div class="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-8">
-                <img src="https://midtrans.com/assets/image/logo-midtrans-blue.svg" alt="Midtrans" class="h-5 mt-0.5 flex-shrink-0">
                 <p class="text-xs text-blue-700 leading-relaxed">Pembayaran diproses secara aman oleh <strong>Midtrans</strong>. Tersedia transfer bank, QRIS, e-wallet (GoPay, OVO, Dana), kartu kredit, dan lainnya.</p>
             </div>
 
