@@ -72,7 +72,7 @@
     @include('public.partials.meta_pixel')
 </head>
 <body class="text-slate-800 font-sans">
-    <div class="max-w-xl mx-auto min-h-screen bg-white relative pb-32 animation-slide-up shadow-sm">
+    <div class="max-w-xl mx-auto min-h-screen bg-white relative pb-44 animation-slide-up shadow-sm">
         
         <a href="{{ route('public.show', $landingPage->slug) }}" class="absolute top-6 left-6 z-[110] w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-700 border border-gray-100 hover:scale-105 active:scale-95 transition">
             <i class="fas fa-arrow-left"></i>

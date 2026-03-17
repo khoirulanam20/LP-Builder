@@ -228,7 +228,7 @@
 
     <!-- Detail Product Overlay Modal -->
     <div id="detailOverlay" class="detail-overlay">
-        <div class="max-w-xl mx-auto min-h-screen bg-white relative pb-32">
+        <div class="max-w-xl mx-auto min-h-screen bg-white relative pb-44">
             <button onclick="hideDetail()" class="fixed top-6 left-6 z-[110] w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center text-primary border border-slate-100 active:scale-90 transition hover:scale-105">
                 <i class="fas fa-arrow-left"></i>
             </button>
@@ -278,7 +278,7 @@
                 </div>
             </div>
 
-            <div class="fixed bottom-8 left-0 w-full px-6 z-[110] flex justify-center">
+            <div class=" left-0 w-full px-6 z-[110] flex justify-center">
                 <div class="w-full max-w-xl">
                     <a id="detailCTA" href="#" class="bg-primary text-primary-text flex items-center justify-center w-full py-4 rounded-xl font-bold text-lg text-center shadow-md animate-cta-btn transition hover:bg-opacity-90">
                         BELI SEKARANG
@@ -290,31 +290,33 @@
 
     @php
         // Prepare Products Data for Javascript
-        $productsData = [];
-        foreach($landingPage->products as $p) {
-            $checkoutUrl = route('public.checkout', ['slug' => $landingPage->slug, 'product_id' => $p->id]);
-            $productsData[$p->id] = [
-                'id' => $p->id,
-                'title' => $p->name,
-                'priceStr' => $p->sale_price > 0 ? 'IDR '.number_format($p->sale_price, 0, ',', '.') : 'IDR '.number_format($p->price, 0, ',', '.'),
-                'oldPriceStr' => $p->sale_price > 0 ? 'IDR '.number_format($p->price, 0, ',', '.') : null,
-                'rawPrice' => $p->sale_price > 0 ? $p->sale_price : $p->price,
-                'img' => $p->image_path ? asset('storage/'.$p->image_path) : null,
-                'desc' => $p->description ?? 'Tidak ada deskripsi rincian untuk produk ini.',
-                'checkoutUrl' => $checkoutUrl,
-                'addons' => $p->addOns->map(function($a) {
-                    return [
-                        'name' => $a->name,
-                        'priceStr' => '+IDR '.number_format($a->price, 0, ',', '.')
-                    ];
-                })
-            ];
-        }
+            $productsData = [];
+            foreach($landingPage->products as $p) {
+                $checkoutUrl = route('public.checkout', ['slug' => $landingPage->slug, 'product_id' => $p->id]);
+                $productsData[$p->id] = [
+                    'id' => $p->id,
+                    'title' => $p->name,
+                    'priceStr' => $p->sale_price > 0 ? 'IDR '.number_format($p->sale_price, 0, ',', '.') : 'IDR '.number_format($p->price, 0, ',', '.'),
+                    'oldPriceStr' => $p->sale_price > 0 ? 'IDR '.number_format($p->price, 0, ',', '.') : null,
+                    'rawPrice' => $p->sale_price > 0 ? $p->sale_price : $p->price,
+                    'img' => $p->image_path ? asset('storage/'.$p->image_path) : null,
+                    'desc' => $p->description ?? 'Tidak ada deskripsi rincian untuk produk ini.',
+                    'checkoutUrl' => $checkoutUrl,
+                    'addons' => $p->addOns->map(function($a) {
+                        return [
+                            'id' => $a->id,
+                            'name' => $a->name,
+                            'priceStr' => '+IDR '.number_format($a->price, 0, ',', '.'),
+                            'rawPrice' => $a->price,
+                        ];
+                    })->values()->all(),
+                ];
+            }
     @endphp
 
     <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        const products = {!! json_encode($productsData) !!};
+            const products = {!! json_encode($productsData) !!};
 
         function showDetail(productId) {
             const p = products[productId];
@@ -344,35 +346,45 @@
             // Set Desc
             document.getElementById('detailDesc').innerHTML = p.desc;
             
-            // Set Addons
+            // Set Addons + reset selected
             const addonsContainer = document.getElementById('detailAddons');
             const addonsList = document.getElementById('detailAddonsList');
             if (p.addons && p.addons.length > 0) {
+                window._detailAddons = p.addons;
+                window._detailSelectedAddons = {};
                 addonsList.innerHTML = p.addons.map(a => `
                     <div class="bg-accent p-4 rounded-xl flex justify-between items-center border border-slate-200 shadow-sm">
-                        <span class="text-sm font-semibold text-slate-700">${a.name}</span>
-                        <span class="text-xs font-bold text-primary-text bg-primary px-3 py-1.5 rounded-lg shadow">${a.priceStr}</span>
+                        <div>
+                            <span class="block text-sm font-semibold text-slate-700">${a.name}</span>
+                            <span class="block text-[11px] text-slate-500 mt-1">Harga add-on: ${a.priceStr}</span>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-2 py-1.5">
+                            <button onclick="changeAddonQty(${a.id}, -1)" class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-xs font-black text-slate-600">&minus;</button>
+                            <span id="addon-qty-${a.id}" class="min-w-[1.5rem] text-center text-sm font-bold text-slate-800">0</span>
+                            <button onclick="changeAddonQty(${a.id}, 1)" class="w-7 h-7 rounded-lg bg-primary text-primary-text text-xs font-black flex items-center justify-center shadow">+</button>
+                        </div>
                     </div>
                 `).join('');
                 addonsContainer.classList.remove('hidden');
             } else {
+                window._detailAddons = [];
+                window._detailSelectedAddons = {};
                 addonsList.innerHTML = '';
                 addonsContainer.classList.add('hidden');
             }
 
             // Set CTA Link
             var baseCheckout = p.checkoutUrl;
-            var currentQty = 1;
-            var currentBasePrice = p.rawPrice;
-
-            // Reset qty
-            document.getElementById('detail-qty-display').textContent = 1;
-            document.getElementById('detail-qty-label').textContent = 'Subtotal: IDR ' + Number(p.rawPrice).toLocaleString('id-ID');
-            document.getElementById('detailCTA').href = baseCheckout + '&qty=1';
 
             window._detailCheckoutBase = baseCheckout;
             window._detailBasePrice = p.rawPrice;
             window._detailQty = 1;
+            window._detailAddons = window._detailAddons || [];
+            window._detailSelectedAddons = window._detailSelectedAddons || {};
+
+            // Reset qty + subtotal + CTA
+            document.getElementById('detail-qty-display').textContent = 1;
+            recomputeDetailTotals();
 
             // Show Overlay
             document.getElementById('detailOverlay').classList.add('detail-active');
@@ -387,8 +399,53 @@
         function changeQtyOverlay(delta) {
             window._detailQty = Math.max(1, (window._detailQty || 1) + delta);
             document.getElementById('detail-qty-display').textContent = window._detailQty;
-            document.getElementById('detail-qty-label').textContent = 'Subtotal: IDR ' + (Number(window._detailBasePrice || 0) * window._detailQty).toLocaleString('id-ID');
-            document.getElementById('detailCTA').href = window._detailCheckoutBase + '&qty=' + window._detailQty;
+            recomputeDetailTotals();
+        }
+
+        function changeAddonQty(addonId, delta) {
+            if (!window._detailSelectedAddons) window._detailSelectedAddons = {};
+            const current = window._detailSelectedAddons[addonId] || 0;
+            const next = Math.max(0, current + delta);
+            window._detailSelectedAddons[addonId] = next;
+
+            const qtyEl = document.getElementById('addon-qty-' + addonId);
+            if (qtyEl) qtyEl.textContent = next;
+
+            recomputeDetailTotals();
+        }
+
+        function recomputeDetailTotals() {
+            const basePrice = Number(window._detailBasePrice || 0);
+            const qty = Number(window._detailQty || 1);
+            let addonsTotal = 0;
+
+            if (Array.isArray(window._detailAddons) && window._detailSelectedAddons) {
+                window._detailAddons.forEach(a => {
+                    const q = window._detailSelectedAddons[a.id] || 0;
+                    if (q > 0 && a.rawPrice) {
+                        addonsTotal += Number(a.rawPrice) * q;
+                    }
+                });
+            }
+
+            const subtotal = basePrice * qty + addonsTotal;
+            const labelEl = document.getElementById('detail-qty-label');
+            if (labelEl) {
+                labelEl.textContent = 'Subtotal: IDR ' + subtotal.toLocaleString('id-ID');
+            }
+
+            // Build checkout URL with qty + addons info
+            let href = window._detailCheckoutBase + '&qty=' + qty;
+            if (window._detailSelectedAddons) {
+                const parts = Object.entries(window._detailSelectedAddons)
+                    .filter(([, v]) => v > 0)
+                    .map(([id, v]) => id + ':' + v);
+                if (parts.length > 0) {
+                    href += '&addons=' + encodeURIComponent(parts.join(','));
+                }
+            }
+            const cta = document.getElementById('detailCTA');
+            if (cta) cta.href = href;
         }
 
         // Testimonial Seamless Marquee
